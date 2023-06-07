@@ -1,5 +1,4 @@
 const express = require('express');
-const {json, urlencoded} = require("express");
 const app = express();
 const PORT = 5002;
 
@@ -31,8 +30,8 @@ const users = [
     },
 ];
 
-app.use(json());
-app.use(urlencoded({extended: true}));
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 app.get('/users', (req, res) => {
     res.status(200).json(users);
