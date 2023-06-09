@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import * as mongoose from "mongoose";
 
 import { configs } from "./configs/config";
+import { ApiError } from "./errors";
 import { userRouter } from "./routers/user.router";
 
 const app = express();
@@ -11,9 +12,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", userRouter);
 
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
   const status = err.status || 500;
-  return res.status(status).json(err.message);
+  return res.status(status).json({
+    message: err.message,
+    status: err.status,
+  });
 });
 
 app.listen(configs.PORT, () => {
