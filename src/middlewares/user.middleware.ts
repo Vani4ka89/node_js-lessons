@@ -16,6 +16,19 @@ class UserMiddleware {
       next(e);
     }
   }
+
+  public isUpdateValid(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { error, value } = UserValidator.update.validate(req.body);
+      if (error) {
+        throw new ApiError(error.message, 400);
+      }
+      res.locals = value;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const userMiddleware = new UserMiddleware();

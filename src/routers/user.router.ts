@@ -8,7 +8,7 @@ const router = Router();
 router.get("/", userController.findAll);
 router.post("/", userMiddleware.isCreateVadid, userController.create);
 router.get("/:id", userController.findById);
-router.put("/:id", userController.updateById);
+router.put("/:id", userMiddleware.isUpdateValid, userController.updateById);
 router.delete("/:id", userController.deleteById);
 
 export const userRouter = router;
