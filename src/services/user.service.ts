@@ -6,16 +6,16 @@ class UserService {
     return User.find().select("-password");
   }
 
-  public async create(data: IUser): Promise<IUser> {
-    return User.create(data);
+  public async create(user: IUser): Promise<IUser> {
+    return User.create(user);
   }
 
   public async findById(id: string): Promise<IUser> {
     return User.findById(id);
   }
 
-  public async updateById(id: string, data: IUser): Promise<IUser> {
-    return User.findOneAndUpdate({ _id: id }, data, {
+  public async updateById(id: string, user: IUser): Promise<IUser> {
+    return User.findOneAndUpdate({ _id: id }, user, {
       returnDocument: "after",
     });
   }
