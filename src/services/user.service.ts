@@ -23,6 +23,8 @@ class UserService {
   public async deleteById(id: string): Promise<void> {
     await User.deleteOne({ _id: id });
   }
+
+  public async findOneByIdOrThrow(id: string) {}
 }
 
 export const userService = new UserService();
