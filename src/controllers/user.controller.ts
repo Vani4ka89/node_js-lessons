@@ -11,7 +11,7 @@ class UserController {
   ): Promise<Response<IUser[]>> {
     try {
       const users = await userService.findAll();
-      return res.json(users);
+      return res.status(200).json(users);
     } catch (e) {
       next(e);
     }
@@ -23,7 +23,7 @@ class UserController {
     next: NextFunction
   ): Promise<Response<IUser>> {
     try {
-      const createdUser = await userService.create(res.locals as IUser);
+      const createdUser = await userService.create(req.body);
       return res.status(201).json(createdUser);
     } catch (e) {
       next(e);
@@ -36,8 +36,9 @@ class UserController {
     next: NextFunction
   ): Promise<Response<IUser>> {
     try {
-      const user = await userService.findById(req.params.id);
-      return res.json(user);
+      const { id } = req.params;
+      const user = await userService.findById(id);
+      return res.status(200).json(user);
     } catch (e) {
       next(e);
     }
@@ -50,7 +51,7 @@ class UserController {
   ): Promise<Response<IUser>> {
     try {
       const { id } = req.params;
-      const user = res.locals as IUser;
+      const user = req.body;
       const updatedUser = await userService.updateById(id, user);
       return res.status(200).json(updatedUser);
     } catch (e) {

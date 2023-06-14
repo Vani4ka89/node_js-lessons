@@ -3,25 +3,25 @@ import { IUser } from "../types/user.type";
 
 class UserService {
   public async findAll(): Promise<IUser[]> {
-    return User.find().select("-password");
+    return await User.find();
   }
 
   public async create(user: IUser): Promise<IUser> {
-    return User.create(user);
+    return await User.create(user);
   }
 
   public async findById(id: string): Promise<IUser> {
-    return User.findById(id);
+    return await User.findById(id);
   }
 
   public async updateById(id: string, user: IUser): Promise<IUser> {
-    return User.findOneAndUpdate({ _id: id }, user, {
+    return await User.findOneAndUpdate({ _id: id }, user, {
       returnDocument: "after",
     });
   }
 
   public async deleteById(id: string): Promise<void> {
-    User.deleteOne({ _id: id });
+    await User.deleteOne({ _id: id });
   }
 }
 
