@@ -36,8 +36,8 @@ class UserController {
     next: NextFunction
   ): Promise<Response<IUser>> {
     try {
-      const { id } = req.params;
-      const user = await userService.findById(id);
+      const { userId } = req.params;
+      const user = await userService.findById(userId);
       return res.status(200).json(user);
     } catch (e) {
       next(e);
@@ -50,9 +50,9 @@ class UserController {
     next: NextFunction
   ): Promise<Response<IUser>> {
     try {
-      const { id } = req.params;
+      const { userId } = req.params;
       const user = req.body;
-      const updatedUser = await userService.updateById(id, user);
+      const updatedUser = await userService.updateById(userId, user);
       return res.status(200).json(updatedUser);
     } catch (e) {
       next(e);
@@ -65,8 +65,8 @@ class UserController {
     next: NextFunction
   ): Promise<Response<void>> {
     try {
-      const { id } = req.params;
-      await userService.deleteById(id);
+      const { userId } = req.params;
+      await userService.deleteById(userId);
       return res.sendStatus(200);
     } catch (e) {
       next(e);
