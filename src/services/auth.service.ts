@@ -25,6 +25,9 @@ class AuthService {
       //TODO: remove, settle inside of the middleware
       user = await User.findOne({ email: credentials.email });
 
+      console.log(credentials);
+      console.log(user);
+
       const isMatched = await passwordService.compare(
         credentials.password,
         user.password
