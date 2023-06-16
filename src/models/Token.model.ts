@@ -1,6 +1,6 @@
 import { model, Schema, Types } from "mongoose";
 
-import { User } from "./User.model";
+import { User } from "./User.mode";
 
 const tokensSchema = new Schema({
   accessToken: {

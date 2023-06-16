@@ -1,13 +1,10 @@
-export interface ITokenPair {
+import { IUser } from "./user.type";
+
+export interface ITokensPair {
   accessToken: string;
   refreshToken: string;
 }
 
-export interface ICredentials {
-  email: string;
-  password: string;
-}
+export type ICredentials = Pick<IUser, "email" | "password">;
 
-export interface ITokenPayload {
-  id: string;
-}
+export type ITokenPayload = Pick<IUser, "name" | "_id">;

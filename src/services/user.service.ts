@@ -1,5 +1,6 @@
 import { ApiError } from "../errors";
-import { User } from "../models/User.model";
+import { User } from "../models/User.mode";
+import { userRepository } from "../repositories/user.repository";
 import { IUser } from "../types/user.type";
 
 class UserService {
@@ -7,24 +8,27 @@ class UserService {
     return await User.find();
   }
 
-  public async create(user: IUser): Promise<IUser> {
-    return await User.create(user);
+  public async create(data: IUser): Promise<IUser> {
+    return await userRepository.create(data);
   }
 
-  public async findById(userId: string): Promise<IUser> {
-    await this.getOneByIdOrThrow(userId);
-    return await User.findById(userId);
+  public async findById(id: string): Promise<IUser> {
+    return await this.getOneByIdOrThrow(id);
   }
 
-  public async updateById(userId: string, user: IUser): Promise<IUser> {
+  public async updateById(userId: string, dto: Partial<IUser>): Promise<IUser> {
     await this.getOneByIdOrThrow(userId);
-    return await User.findOneAndUpdate({ _id: userId }, user, {
-      returnDocument: "after",
-    });
+
+    return await User.findOneAndUpdate(
+      { _id: userId },
+      { ...dto },
+      { returnDocument: "after" }
+    );
   }
 
   public async deleteById(userId: string): Promise<void> {
     await this.getOneByIdOrThrow(userId);
+
     await User.deleteOne({ _id: userId });
   }
 

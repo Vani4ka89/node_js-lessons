@@ -1,17 +1,17 @@
 import { ApiError } from "../errors";
 import { Token } from "../models/Token.model";
-import { User } from "../models/User.model";
-import { ICredentials, ITokenPair } from "../types/token.types";
+import { User } from "../models/User.mode";
+import { ICredentials, ITokensPair } from "../types/token.types";
 import { IUser } from "../types/user.type";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
 class AuthService {
-  public async register(user: IUser): Promise<void> {
+  public async register(data: IUser): Promise<void> {
     try {
-      const hashedPassword = await passwordService.hash(user.password);
+      const hashedPassword = await passwordService.hash(data.password);
 
-      await User.create({ ...user, password: hashedPassword });
+      await User.create({ ...data, password: hashedPassword });
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
@@ -20,7 +20,7 @@ class AuthService {
   public async login(
     credentials: ICredentials,
     user: IUser
-  ): Promise<ITokenPair> {
+  ): Promise<ITokensPair> {
     try {
       const isMatched = await passwordService.compare(
         credentials.password,
@@ -31,7 +31,8 @@ class AuthService {
       }
 
       const tokensPair = await tokenService.generateTokenPair({
-        id: user._id,
+        _id: user._id,
+        name: user.name,
       });
 
       await Token.create({
