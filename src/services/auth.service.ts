@@ -1,17 +1,17 @@
 import { ApiError } from "../errors";
 import { Token } from "../models/Token.model";
 import { User } from "../models/User.model";
-import { ICredentials, ITokensPair } from "../types/token.types";
+import { ICredentials, ITokenPair } from "../types/token.types";
 import { IUser } from "../types/user.type";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
 class AuthService {
-  public async register(data: IUser): Promise<void> {
+  public async register(user: IUser): Promise<void> {
     try {
-      const hashedPassword = await passwordService.hash(data.password);
+      const hashedPassword = await passwordService.hash(user.password);
 
-      await User.create({ ...data, password: hashedPassword });
+      await User.create({ ...user, password: hashedPassword });
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
@@ -20,14 +20,8 @@ class AuthService {
   public async login(
     credentials: ICredentials,
     user: IUser
-  ): Promise<ITokensPair> {
+  ): Promise<ITokenPair> {
     try {
-      //TODO: remove, settle inside of the middleware
-      user = await User.findOne({ email: credentials.email });
-
-      console.log(credentials);
-      console.log(user);
-
       const isMatched = await passwordService.compare(
         credentials.password,
         user.password
@@ -37,7 +31,7 @@ class AuthService {
       }
 
       const tokensPair = await tokenService.generateTokenPair({
-        _id: user._id,
+        id: user._id,
       });
 
       await Token.create({

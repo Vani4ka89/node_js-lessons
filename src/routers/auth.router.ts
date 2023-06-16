@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { authController } from "../controllers/auth.controller";
 import { commonMiddleware } from "../middlewares/common.middleware";
+import { userMiddleware } from "../middlewares/user.middleware";
 import { UserValidator } from "../validators";
 
 const router = Router();
@@ -12,6 +13,6 @@ router.post(
   authController.register
 );
 
-router.post("/login", authController.login);
+router.post("/login", userMiddleware.isUserExist, authController.login);
 
 export const authRouter = router;
