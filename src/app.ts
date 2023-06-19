@@ -11,8 +11,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CRUD - create, read, update, delete
-
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
 
@@ -27,5 +25,5 @@ app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
 
 app.listen(configs.PORT, () => {
   mongoose.connect(configs.DB_URL);
-  console.log(`Server has started on PORT ${configs.PORT} 🥸`);
+  console.log(`Server has started on PORT ${configs.PORT}`);
 });
