@@ -1,17 +1,22 @@
+import { EEmailActions } from "../enums/email.enum";
 import { ApiError } from "../errors";
 import { Token } from "../models/Token.model";
 import { User } from "../models/User.mode";
 import { ICredentials, ITokensPair } from "../types/token.types";
 import { IUser } from "../types/user.type";
+import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
 class AuthService {
-  public async register(data: IUser): Promise<void> {
+  public async register(user: IUser): Promise<void> {
     try {
-      const hashedPassword = await passwordService.hash(data.password);
+      const hashedPassword = await passwordService.hash(user.password);
 
-      await User.create({ ...data, password: hashedPassword });
+      await User.create({ ...user, password: hashedPassword });
+      await emailService.sendMail(user.email, EEmailActions.WELCOME, {
+        name: user.name,
+      });
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
