@@ -1,8 +1,9 @@
 import { EEmailActions } from "../enums/email.enum";
 import { ApiError } from "../errors";
+import { OldPassword } from "../models/OldPassword.model";
 import { Token } from "../models/Token.model";
 import { User } from "../models/User.mode";
-import { ICredentials, ITokensPair } from "../types/token.types";
+import { ICredentials, ITokenPayload, ITokensPair } from "../types/token.types";
 import { IUser } from "../types/user.type";
 import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
@@ -46,6 +47,62 @@ class AuthService {
       });
 
       return tokensPair;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async refresh(
+    oldTokensPair: ITokensPair,
+    tokenPayload: ITokenPayload
+  ): Promise<ITokensPair> {
+    try {
+      const tokensPair = await tokenService.generateTokenPair(tokenPayload);
+
+      await Promise.all([
+        Token.create({ _userId: tokenPayload._id, ...tokensPair }),
+        Token.deleteOne({ refreshToken: oldTokensPair.refreshToken }),
+      ]);
+
+      return tokensPair;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async changePassword(
+    dto: { newPassword: string; oldPassword: string },
+    userId: string
+  ): Promise<void> {
+    try {
+      const oldPasswords = await OldPassword.find({ _userId: userId });
+      await Promise.all(
+        oldPasswords.map(async ({ password: hash }) => {
+          const isMatched = await passwordService.compare(
+            dto.oldPassword,
+            hash
+          );
+          if (isMatched) {
+            throw new ApiError("Wrong old password", 400);
+          }
+        })
+      );
+
+      const user = await User.findById(userId).select("password");
+
+      const isMatched = await passwordService.compare(
+        dto.oldPassword,
+        user.password
+      );
+      if (!isMatched) {
+        throw new ApiError("Wrong old password", 400);
+      }
+
+      const newHash = await passwordService.hash(dto.newPassword);
+      await Promise.all([
+        OldPassword.create({ password: user.password, _userId: userId }),
+        User.updateOne({ _id: userId }, { password: newHash }),
+      ]);
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
