@@ -26,7 +26,7 @@ router.post(
 );
 
 router.post(
-  "/changePassword",
+  "/password/change",
   commonMiddleware.isBodyValid(UserValidator.changePassword),
   authMiddleware.checkAccessToken,
   authController.changePassword
