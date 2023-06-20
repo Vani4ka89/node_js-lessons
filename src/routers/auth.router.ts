@@ -1,9 +1,12 @@
 import { Router } from "express";
 
-import { authController } from "../controllers/auth.controller";
-import { commonMiddleware, userMiddleware } from "../middlewares";
-import { authMiddleware } from "../middlewares/auth.middleware";
-import { ICredentials } from "../types/token.types";
+import { authController } from "../controllers";
+import {
+  authMiddleware,
+  commonMiddleware,
+  userMiddleware,
+} from "../middlewares";
+import { ICredentials } from "../types";
 import { UserValidator } from "../validators";
 
 const router = Router();

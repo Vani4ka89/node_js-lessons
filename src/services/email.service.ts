@@ -3,8 +3,8 @@ import hbs from "nodemailer-express-handlebars";
 import * as path from "path";
 
 import { configs } from "../configs/config";
-import { allTemplates } from "../constants/email.constants";
-import { EEmailActions } from "../enums/email.enum";
+import { allTemplates } from "../constants";
+import { EEmailActions } from "../enums";
 
 class EmailService {
   private transporter;
@@ -49,7 +49,6 @@ class EmailService {
     context: Record<string, string | number> = {}
   ) {
     const { templateName, subject } = allTemplates[emailAction];
-
     const mailOptions = {
       to: email,
       subject,

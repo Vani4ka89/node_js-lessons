@@ -9,11 +9,9 @@ class CommonMiddleware {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
         const id = req.params[field];
-
         if (!isObjectIdOrHexString(id)) {
-          throw new ApiError(`Id ${field} not valid`, 400);
+          throw new ApiError(`Id is not valid`, 400);
         }
-
         next();
       } catch (e) {
         next(e);
@@ -28,7 +26,6 @@ class CommonMiddleware {
         if (error) {
           throw new ApiError(error.message, 400);
         }
-
         req.body = value;
         next();
       } catch (e) {

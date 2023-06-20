@@ -1,10 +1,7 @@
-import { EEmailActions } from "../enums/email.enum";
+import { EEmailActions } from "../enums";
 import { ApiError } from "../errors";
-import { OldPassword } from "../models/OldPassword.model";
-import { Token } from "../models/Token.model";
-import { User } from "../models/User.mode";
-import { ICredentials, ITokenPayload, ITokensPair } from "../types/token.types";
-import { IUser } from "../types/user.type";
+import { OldPassword, Token, User } from "../models";
+import { ICredentials, ITokenPayload, ITokensPair, IUser } from "../types";
 import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
@@ -13,7 +10,6 @@ class AuthService {
   public async register(user: IUser): Promise<void> {
     try {
       const hashedPassword = await passwordService.hash(user.password);
-
       await User.create({ ...user, password: hashedPassword });
       await emailService.sendMail(user.email, EEmailActions.WELCOME, {
         name: user.name,
@@ -35,17 +31,14 @@ class AuthService {
       if (!isMatched) {
         throw new ApiError("Invalid email or password", 401);
       }
-
       const tokensPair = await tokenService.generateTokenPair({
         _id: user._id,
         name: user.name,
       });
-
       await Token.create({
         ...tokensPair,
         _userId: user._id,
       });
-
       return tokensPair;
     } catch (e) {
       throw new ApiError(e.message, e.status);
@@ -58,12 +51,10 @@ class AuthService {
   ): Promise<ITokensPair> {
     try {
       const tokensPair = await tokenService.generateTokenPair(tokenPayload);
-
       await Promise.all([
         Token.create({ _userId: tokenPayload._id, ...tokensPair }),
         Token.deleteOne({ refreshToken: oldTokensPair.refreshToken }),
       ]);
-
       return tokensPair;
     } catch (e) {
       throw new ApiError(e.message, e.status);
@@ -89,7 +80,6 @@ class AuthService {
       );
 
       const user = await User.findById(userId).select("password");
-
       const isMatched = await passwordService.compare(
         dto.oldPassword,
         user.password
@@ -97,7 +87,6 @@ class AuthService {
       if (!isMatched) {
         throw new ApiError("Wrong old password", 400);
       }
-
       const newHash = await passwordService.hash(dto.newPassword);
       await Promise.all([
         OldPassword.create({ password: user.password, _userId: userId }),

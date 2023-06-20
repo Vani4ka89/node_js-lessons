@@ -11,6 +11,9 @@ export const configs = {
 
   SECRET_SALT: process.env.SECRET_SALT,
 
+  ACCESS_EXPIRE: process.env.ACCESS_EXPIRE,
+  REFRESH_EXPIRE: process.env.REFRESH_EXPIRE,
+
   NO_REPLY_EMAIL: process.env.NO_REPLY_EMAIL,
   NO_REPLY_PASSWORD: process.env.NO_REPLY_PASSWORD,
 };

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../errors";
-import { User } from "../models/User.mode";
-import { IUser } from "../types/user.type";
+import { User } from "../models";
+import { IUser } from "../types";
 
 class UserMiddleware {
   public findAndThrow(field: keyof IUser) {
@@ -16,7 +16,6 @@ class UserMiddleware {
         if (user) {
           throw new ApiError("User with this email already exist", 409);
         }
-
         next();
       } catch (e) {
         next(e);
@@ -35,7 +34,6 @@ class UserMiddleware {
         if (!user) {
           throw new ApiError("User not found", 422);
         }
-
         res.locals.user = user;
         next();
       } catch (e) {

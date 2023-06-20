@@ -1,9 +1,9 @@
-import { User } from "../models/User.mode";
-import { IUser } from "../types/user.type";
+import { User } from "../models";
+import { IUser } from "../types";
 
 class UserRepository {
-  public async create(data: IUser): Promise<IUser> {
-    return await User.create(data);
+  public async create(user: IUser): Promise<IUser> {
+    return await User.create(user);
   }
 }
 

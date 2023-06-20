@@ -1,27 +1,30 @@
 import { ApiError } from "../errors";
-import { User } from "../models/User.mode";
-import { userRepository } from "../repositories/user.repository";
-import { IUser } from "../types/user.type";
+import { User } from "../models";
+import { userRepository } from "../repositories";
+import { IUser } from "../types";
 
 class UserService {
   public async findAll(): Promise<IUser[]> {
     return await User.find();
   }
 
-  public async create(data: IUser): Promise<IUser> {
-    return await userRepository.create(data);
+  public async create(user: IUser): Promise<IUser> {
+    return await userRepository.create(user);
   }
 
   public async findById(id: string): Promise<IUser> {
     return await this.getOneByIdOrThrow(id);
   }
 
-  public async updateById(userId: string, dto: Partial<IUser>): Promise<IUser> {
+  public async updateById(
+    userId: string,
+    user: Partial<IUser>
+  ): Promise<IUser> {
     await this.getOneByIdOrThrow(userId);
 
     return await User.findOneAndUpdate(
       { _id: userId },
-      { ...dto },
+      { ...user },
       { returnDocument: "after" }
     );
   }
