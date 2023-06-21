@@ -37,7 +37,7 @@ class AuthController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<Response<ITokensPair>> {
+  ): Promise<Response<void>> {
     try {
       const { _id: userId } = req.res.locals.tokenPayload as ITokenPayload;
       await authService.changePassword(req.body, userId);

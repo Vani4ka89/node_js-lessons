@@ -62,7 +62,7 @@ class AuthService {
   }
 
   public async changePassword(
-    dto: { newPassword: string; oldPassword: string },
+    body: { newPassword: string; oldPassword: string },
     userId: string
   ): Promise<void> {
     try {
@@ -70,7 +70,7 @@ class AuthService {
       await Promise.all(
         oldPasswords.map(async ({ password: hash }) => {
           const isMatched = await passwordService.compare(
-            dto.oldPassword,
+            body.oldPassword,
             hash
           );
           if (isMatched) {
@@ -78,16 +78,15 @@ class AuthService {
           }
         })
       );
-
       const user = await User.findById(userId).select("password");
       const isMatched = await passwordService.compare(
-        dto.oldPassword,
+        body.oldPassword,
         user.password
       );
       if (!isMatched) {
         throw new ApiError("Wrong old password", 400);
       }
-      const newHash = await passwordService.hash(dto.newPassword);
+      const newHash = await passwordService.hash(body.newPassword);
       await Promise.all([
         OldPassword.create({ password: user.password, _userId: userId }),
         User.updateOne({ _id: userId }, { password: newHash }),
