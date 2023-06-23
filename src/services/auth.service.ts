@@ -127,12 +127,12 @@ class AuthService {
     userId: Types.ObjectId,
     actionToken: string
   ): Promise<void> {
-    const hashedPassword = passwordService.hash(password);
-    await Promise.all([
-      User.updateOne({ _id: userId }, { password: hashedPassword }),
-      Action.deleteOne({ actionToken }),
-    ]);
     try {
+      const hashedPassword = passwordService.hash(password);
+      await Promise.all([
+        User.updateOne({ _id: userId }, { password: hashedPassword }),
+        Action.deleteOne({ actionToken }),
+      ]);
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
