@@ -33,6 +33,21 @@ class AuthController {
     }
   }
 
+  public async refresh(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<ITokensPair>> {
+    try {
+      const oldTokenPair = req.res.locals.oldTokenPair as ITokensPair;
+      const tokenPayload = req.res.locals.tokenPayload as ITokenPayload;
+      const tokensPair = await authService.refresh(oldTokenPair, tokenPayload);
+      return res.status(200).json(tokensPair);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   public async changePassword(
     req: Request,
     res: Response,
@@ -75,21 +90,6 @@ class AuthController {
         req.params.token
       );
       return res.sendStatus(200);
-    } catch (e) {
-      next(e);
-    }
-  }
-
-  public async refresh(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response<ITokensPair>> {
-    try {
-      const oldTokenPair = req.res.locals.oldTokenPair as ITokensPair;
-      const tokenPayload = req.res.locals.tokenPayload as ITokenPayload;
-      const tokensPair = await authService.refresh(oldTokenPair, tokenPayload);
-      return res.status(200).json(tokensPair);
     } catch (e) {
       next(e);
     }

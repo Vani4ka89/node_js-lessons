@@ -1,10 +1,8 @@
 import { Types } from "mongoose";
 
-import { EEmailActions } from "../enums";
-import { EActionTokenTypes } from "../enums/action-token-type";
+import { EActionTokenTypes, EEmailActions } from "../enums";
 import { ApiError } from "../errors";
-import { OldPassword, Token, User } from "../models";
-import { Action } from "../models/Action.model";
+import { Action, OldPassword, Token, User } from "../models";
 import { ICredentials, ITokenPayload, ITokensPair, IUser } from "../types";
 import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
@@ -74,7 +72,7 @@ class AuthService {
       await Promise.all(
         oldPasswords.map(async ({ password: hash }) => {
           const isMatched = await passwordService.compare(
-            body.oldPassword,
+            body.newPassword,
             hash
           );
           if (isMatched) {
