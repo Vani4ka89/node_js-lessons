@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { authController } from "../controllers";
+import { EActionTokenTypes } from "../enums/action-token-type";
 import {
   authMiddleware,
   commonMiddleware,
@@ -30,6 +31,19 @@ router.post(
   commonMiddleware.isBodyValid(UserValidator.changePassword),
   authMiddleware.checkAccessToken,
   authController.changePassword
+);
+router.post(
+  "/forgot",
+  commonMiddleware.isBodyValid(UserValidator.forgotPassword),
+  userMiddleware.isUserExist<ICredentials>("email"),
+  authController.forgotPassword
+);
+
+router.put(
+  "/forgot/:token",
+  commonMiddleware.isBodyValid(UserValidator.setForgotPassword),
+  authMiddleware.checkActionToken(EActionTokenTypes.Forgot),
+  authController.setForgotPassword
 );
 
 router.post(
