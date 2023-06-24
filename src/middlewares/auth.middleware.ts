@@ -64,7 +64,7 @@ class AuthMiddleware {
         );
         const tokenFromDb = await Action.findOne({ actionToken });
         if (!tokenFromDb) {
-          throw new ApiError("Token is invalid", 400);
+          throw new ApiError("Token is not valid", 400);
         }
         req.res.locals = { jwtPayload, tokenFromDb };
         next();
