@@ -128,7 +128,7 @@ class AuthService {
     actionToken: string
   ): Promise<void> {
     try {
-      const hashedPassword = passwordService.hash(password);
+      const hashedPassword = await passwordService.hash(password);
       await Promise.all([
         User.updateOne({ _id: userId }, { password: hashedPassword }),
         Action.deleteOne({ actionToken }),
