@@ -3,21 +3,24 @@ import { model, Schema, Types } from "mongoose";
 import { EActionTokenTypes } from "../enums";
 import { User } from "./User.mode";
 
-const actionSchema = new Schema({
-  actionToken: {
-    type: String,
-    required: true,
+const actionSchema = new Schema(
+  {
+    actionToken: {
+      type: String,
+      required: true,
+    },
+    tokenType: {
+      type: String,
+      required: true,
+      enum: EActionTokenTypes,
+    },
+    _userId: {
+      type: Types.ObjectId,
+      required: true,
+      ref: User,
+    },
   },
-  tokenType: {
-    type: String,
-    required: true,
-    enum: EActionTokenTypes,
-  },
-  _userId: {
-    type: Types.ObjectId,
-    required: true,
-    ref: User,
-  },
-});
+  { versionKey: false, timestamps: true }
+);
 
 export const Action = model("action", actionSchema);
