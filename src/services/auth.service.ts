@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 import { EActionTokenTypes, EEmailActions } from "../enums";
+import { EUserStatus } from "../enums/user-status.enum";
 import { ApiError } from "../errors";
 import { Action, OldPassword, Token, User } from "../models";
 import { ICredentials, ITokenPayload, ITokensPair, IUser } from "../types";
@@ -9,13 +10,39 @@ import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
 class AuthService {
-  public async register(user: IUser): Promise<void> {
+  public async register(data: IUser): Promise<void> {
     try {
-      const hashedPassword = await passwordService.hash(user.password);
-      await User.create({ ...user, password: hashedPassword });
-      await emailService.sendMail(user.email, EEmailActions.WELCOME, {
-        name: user.name,
-      });
+      const hashedPassword = await passwordService.hash(data.password);
+      const user = await User.create({ ...data, password: hashedPassword });
+      const actionToken = tokenService.generateActionToken(
+        { _id: user._id },
+        EActionTokenTypes.Activate
+      );
+      await Promise.all([
+        Action.create({
+          actionToken,
+          tokenType: EActionTokenTypes.Activate,
+          _userId: user._id,
+        }),
+        emailService.sendMail(data.email, EEmailActions.WELCOME, {
+          name: data.name,
+          actionToken,
+        }),
+      ]);
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async activate(jwtPayload: ITokenPayload): Promise<void> {
+    try {
+      User.updateOne({ _id: jwtPayload._id }, { status: EUserStatus.Active });
+      await Promise.all([
+        Action.deleteMany({
+          _userId: jwtPayload._id,
+          tokenType: EActionTokenTypes.Activate,
+        }),
+      ]);
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
@@ -68,9 +95,13 @@ class AuthService {
     userId: string
   ): Promise<void> {
     try {
-      const oldPasswords = await OldPassword.find({ _userId: userId });
+      const [oldPasswords, user] = await Promise.all([
+        OldPassword.find({ _userId: userId }),
+        await User.findById(userId).select("password"),
+      ]);
+      const passwords = [...oldPasswords, { password: user.password }];
       await Promise.all(
-        oldPasswords.map(async ({ password: hash }) => {
+        passwords.map(async ({ password: hash }) => {
           const isMatched = await passwordService.compare(
             body.newPassword,
             hash
@@ -80,14 +111,7 @@ class AuthService {
           }
         })
       );
-      const user = await User.findById(userId).select("password");
-      const isMatched = await passwordService.compare(
-        body.oldPassword,
-        user.password
-      );
-      if (!isMatched) {
-        throw new ApiError("Wrong old password", 400);
-      }
+
       const newHash = await passwordService.hash(body.newPassword);
       await Promise.all([
         OldPassword.create({ password: user.password, _userId: userId }),
