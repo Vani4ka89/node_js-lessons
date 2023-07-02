@@ -15,7 +15,9 @@ export const configs = {
 
   ACCESS_EXPIRE: process.env.ACCESS_EXPIRE,
   REFRESH_EXPIRE: process.env.REFRESH_EXPIRE,
-  FORGOT_EXPIRE: process.env.FORGOT_EXPIRE,
+  // FORGOT_EXPIRE: process.env.FORGOT_EXPIRE,
+  // ACTIVATE_EXPIRE: process.env.ACTIVATE_EXPIRE,
+  ACTION_TOKEN_EXPIRE: process.env.ACTION_TOKEN_EXPIRE,
 
   NO_REPLY_EMAIL: process.env.NO_REPLY_EMAIL,
   NO_REPLY_PASSWORD: process.env.NO_REPLY_PASSWORD,

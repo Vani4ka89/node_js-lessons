@@ -46,10 +46,15 @@ class TokenService {
         case EActionTokenTypes.Forgot:
           secret = configs.JWT_FORGOT_SECRET;
           break;
+        case EActionTokenTypes.Activate:
+          secret = configs.JWT_ACTIVATE_SECRET;
+          break;
       }
-      return jwt.sign(payload, secret, { expiresIn: configs.FORGOT_EXPIRE });
+      return jwt.sign(payload, secret, {
+        expiresIn: configs.ACTION_TOKEN_EXPIRE,
+      });
     } catch (e) {
-      throw new ApiError(e.message, e.status);
+      throw new ApiError("Token not valid", 401);
     }
   }
 
