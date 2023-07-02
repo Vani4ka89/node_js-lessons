@@ -42,12 +42,19 @@ class TokenService {
   ): string {
     try {
       let secret: string;
+      let actionTokenExpire: string;
+
       switch (tokenType) {
         case EActionTokenTypes.Forgot:
           secret = configs.JWT_FORGOT_SECRET;
+          actionTokenExpire = configs.FORGOT_EXPIRE;
+          break;
+        case EActionTokenTypes.Activate:
+          secret = configs.JWT_ACTIVATE_SECRET;
+          actionTokenExpire = configs.ACTIVATE_EXPIRE;
           break;
       }
-      return jwt.sign(payload, secret, { expiresIn: configs.FORGOT_EXPIRE });
+      return jwt.sign(payload, secret, { expiresIn: actionTokenExpire });
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }

@@ -36,8 +36,8 @@ class AuthService {
 
   public async activate(jwtPayload: ITokenPayload): Promise<void> {
     try {
-      User.updateOne({ _id: jwtPayload._id }, { status: EUserStatus.Active });
       await Promise.all([
+        User.updateOne({ _id: jwtPayload._id }, { status: EUserStatus.Active }),
         Action.deleteMany({
           _userId: jwtPayload._id,
           tokenType: EActionTokenTypes.Activate,
