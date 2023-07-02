@@ -1,4 +1,6 @@
+import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
+import rateLimit from "express-rate-limit";
 import * as mongoose from "mongoose";
 import * as swaggerUi from "swagger-ui-express";
 
@@ -9,6 +11,28 @@ import { authRouter, userRouter } from "./routers";
 import * as swaggerJson from "./utils/swagger.json";
 
 const app = express();
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+});
+
+app.use("*", limiter);
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+    allowedHeaders: [
+      "Authorization",
+      "Content-Type",
+      "Origin",
+      "Access-Control-Allow-Origin",
+    ],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
