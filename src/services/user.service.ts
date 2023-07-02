@@ -1,3 +1,5 @@
+import { UploadedFile } from "express-fileupload";
+
 import { ApiError } from "../errors";
 import { User } from "../models";
 // import { userRepository } from "../repositories";
@@ -31,6 +33,15 @@ class UserService {
   public async deleteById(userId: string): Promise<void> {
     await this.getOneByIdOrThrow(userId);
     await User.deleteOne({ _id: userId });
+  }
+
+  public async uploadAvatar(
+    userId: string,
+    avatar: UploadedFile
+  ): Promise<IUser> {
+    const user = await this.getOneByIdOrThrow(userId);
+    // await User.deleteOne({ _id: userId });
+    return user;
   }
 
   private async getOneByIdOrThrow(userId: string): Promise<IUser> {
