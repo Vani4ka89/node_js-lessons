@@ -4,6 +4,7 @@ import { ApiError } from "../errors";
 import { User } from "../models";
 // import { userRepository } from "../repositories";
 import { IUser } from "../types";
+import { s3Service } from "./s3.service";
 
 class UserService {
   public async findAll(): Promise<IUser[]> {
@@ -39,9 +40,14 @@ class UserService {
     userId: string,
     avatar: UploadedFile
   ): Promise<IUser> {
-    const user = await this.getOneByIdOrThrow(userId);
-    // await User.deleteOne({ _id: userId });
-    return user;
+    await this.getOneByIdOrThrow(userId);
+
+    const pathToFile = await s3Service.uploadFile(avatar, "user", userId);
+    return await User.findByIdAndUpdate(
+      userId,
+      { $set: { avatar: pathToFile } },
+      { new: true }
+    );
   }
 
   private async getOneByIdOrThrow(userId: string): Promise<IUser> {

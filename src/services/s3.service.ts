@@ -28,12 +28,13 @@ class S3Service {
         Key: filePath,
         Body: file.data,
         ACL: configs.AWS_S3_ACL,
+        ContentType: file.mimetype,
       })
     );
     return filePath;
   }
   private buildPath(type: string, id: string, fileName: string): string {
-    return `${type}/${id}/${v4}${path.extname(fileName)}`;
+    return `${type}/${id}/${v4()}${path.extname(fileName)}`;
   }
 }
 
