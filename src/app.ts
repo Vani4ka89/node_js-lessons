@@ -1,8 +1,10 @@
 import cors from "cors";
-import express, { NextFunction, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import fileupload from "express-fileupload";
 import rateLimit from "express-rate-limit";
+import * as http from "http";
 import * as mongoose from "mongoose";
+import { Server, Socket } from "socket.io";
 import * as swaggerUi from "swagger-ui-express";
 
 import { configs } from "./configs/config";
@@ -11,7 +13,18 @@ import { ApiError } from "./errors";
 import { authRouter, userRouter } from "./routers";
 import * as swaggerJson from "./utils/swagger.json";
 
-const app = express();
+const app: Application = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+io.on("connection", (socket: Socket) => {
+  console.log(socket.id);
+  socket.emit("message", { message: "hello" });
+});
 
 const limiter = rateLimit({
   windowMs: 60 * 1000,
@@ -52,7 +65,7 @@ app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-app.listen(configs.PORT, () => {
+server.listen(configs.PORT, () => {
   mongoose.connect(configs.DB_URL);
   cronRunner();
   console.log(`Server has started on PORT ${configs.PORT}`);
