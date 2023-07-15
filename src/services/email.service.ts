@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import * as path from "path";
 
-import { configs } from "../configs/config";
+import { configs } from "../configs";
 import { allTemplates } from "../constants";
 import { EEmailActions } from "../enums";
 

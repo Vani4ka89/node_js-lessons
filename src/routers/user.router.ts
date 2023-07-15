@@ -1,8 +1,11 @@
 import { Router } from "express";
 
 import { userController } from "../controllers";
-import { authMiddleware, commonMiddleware } from "../middlewares";
-import { fileMiddleware } from "../middlewares/file.middleware";
+import {
+  authMiddleware,
+  commonMiddleware,
+  fileMiddleware,
+} from "../middlewares";
 import { UserValidator } from "../validators";
 
 const router = Router();

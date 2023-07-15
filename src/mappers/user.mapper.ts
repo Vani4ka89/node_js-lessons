@@ -1,4 +1,4 @@
-import { configs } from "../configs/config";
+import { configs } from "../configs";
 import { IUser } from "../types";
 
 class UserMapper {

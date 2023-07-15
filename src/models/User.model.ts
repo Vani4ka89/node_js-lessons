@@ -1,7 +1,6 @@
 import { model, Schema } from "mongoose";
 
-import { EGenders } from "../enums";
-import { EUserStatus } from "../enums/user-status.enum";
+import { EGenders, EUserStatus } from "../enums";
 
 const userSchema = new Schema(
   {

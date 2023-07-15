@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
-import { userMapper } from "../mappers/user.mapper";
+import { userMapper } from "../mappers";
 import { userService } from "../services";
 import { IPaginationResponse, IQuery, IUser } from "../types";
 

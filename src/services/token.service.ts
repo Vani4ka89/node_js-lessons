@@ -1,6 +1,6 @@
 import * as jwt from "jsonwebtoken";
 
-import { configs } from "../configs/config";
+import { configs } from "../configs";
 import { EActionTokenTypes, ETokenType } from "../enums";
 import { ApiError } from "../errors";
 import { ITokenPayload, ITokensPair } from "../types";

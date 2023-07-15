@@ -1,7 +1,6 @@
 import { Types } from "mongoose";
 
-import { EActionTokenTypes, EEmailActions } from "../enums";
-import { EUserStatus } from "../enums/user-status.enum";
+import { EActionTokenTypes, EEmailActions, EUserStatus } from "../enums";
 import { ApiError } from "../errors";
 import { Action, OldPassword, Token, User } from "../models";
 import { ICredentials, ITokenPayload, ITokensPair, IUser } from "../types";
