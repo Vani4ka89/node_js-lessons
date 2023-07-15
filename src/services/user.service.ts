@@ -72,8 +72,11 @@ class UserService {
     userId: string,
     avatar: UploadedFile
   ): Promise<IUser> {
-    await this.getOneByIdOrThrow(userId);
+    const user = await this.getOneByIdOrThrow(userId);
 
+    if (user.avatar) {
+      await s3Service.deleteFile(user.avatar);
+    }
     const pathToFile = await s3Service.uploadFile(avatar, "user", userId);
     return await User.findByIdAndUpdate(
       userId,
