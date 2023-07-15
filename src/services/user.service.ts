@@ -3,12 +3,44 @@ import { UploadedFile } from "express-fileupload";
 import { ApiError } from "../errors";
 import { User } from "../models";
 // import { userRepository } from "../repositories";
-import { IUser } from "../types";
+import { IPaginationResponse, IQuery, IUser } from "../types";
 import { s3Service } from "./s3.service";
 
 class UserService {
   public async findAll(): Promise<IUser[]> {
     return await User.find();
+  }
+
+  public async findAllWithPagination(
+    query: IQuery
+  ): Promise<IPaginationResponse<IUser>> {
+    try {
+      const queryStr = JSON.stringify(query);
+      const queryObj = JSON.parse(
+        queryStr.replace(/\b(gte|lte|gt|lt)\b/, (match) => `$${match}`)
+      );
+      const {
+        page = 1,
+        limit = 10,
+        sortedBy = "createdAt",
+        ...searchObject
+      } = queryObj;
+      const skip = limit * (page - 1);
+      const [users, usersTotalCount, usersSearchCount] = await Promise.all([
+        User.find(searchObject).limit(limit).skip(skip).sort(sortedBy),
+        User.count(),
+        User.count(searchObject),
+      ]);
+      return {
+        page: page,
+        perPage: limit,
+        itemsCount: usersTotalCount,
+        itemsFound: usersSearchCount,
+        data: users,
+      };
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 
   // public async create(user: IUser): Promise<IUser> {

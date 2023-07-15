@@ -2,16 +2,18 @@ import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
 import { userService } from "../services";
-import { IUser } from "../types";
+import { IPaginationResponse, IQuery, IUser } from "../types";
 
 class UserController {
   public async findAll(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<Response<IUser[]>> {
+  ): Promise<Response<IPaginationResponse<IUser>>> {
     try {
-      const users = await userService.findAll();
+      const users = await userService.findAllWithPagination(
+        req.query as unknown as IQuery
+      );
       return res.json(users);
     } catch (e) {
       next(e);
