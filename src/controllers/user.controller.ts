@@ -29,7 +29,8 @@ class UserController {
     try {
       const { userId } = req.params;
       const user = await userService.findById(userId);
-      return res.json(user);
+      const response = userMapper.toResponse(user);
+      return res.json(response);
     } catch (e) {
       next(e);
     }
@@ -43,7 +44,8 @@ class UserController {
     try {
       const { userId } = req.params;
       const updatedUser = await userService.updateById(userId, req.body);
-      return res.status(200).json(updatedUser);
+      const response = userMapper.toResponse(updatedUser);
+      return res.status(200).json(response);
     } catch (e) {
       next(e);
     }
@@ -87,8 +89,9 @@ class UserController {
   ): Promise<Response<void>> {
     try {
       const { userId } = req.params;
-      await userService.deleteById(userId);
-      return res.sendStatus(204);
+      const user = await userService.deleteAvatar(userId);
+      const response = userMapper.toResponse(user);
+      return res.status(201).json(response);
     } catch (e) {
       next(e);
     }
