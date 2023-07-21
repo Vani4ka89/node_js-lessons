@@ -14,12 +14,11 @@ class SmsService {
   public async sendSms(phone: string, action: ESmsActions) {
     try {
       const template = smsTemplates[action];
-      const data = await this.client.messages.create({
+      await this.client.messages.create({
         body: template,
         messagingServiceSid: configs.TWILIO_SERVICE_SID,
         to: phone,
       });
-      console.log(data);
     } catch (e) {
       console.error(e.message);
     }
