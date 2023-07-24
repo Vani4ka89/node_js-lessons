@@ -1,4 +1,4 @@
-import cors from "cors";
+// import cors from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
 import fileupload from "express-fileupload";
 import rateLimit from "express-rate-limit";
@@ -34,20 +34,20 @@ const limiter = rateLimit({
 
 app.use("*", limiter);
 
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-    allowedHeaders: [
-      "Authorization",
-      "Content-Type",
-      "Origin",
-      "Access-Control-Allow-Origin",
-    ],
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  })
-);
+// app.use(
+//   cors({
+//     origin: "*",
+//     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+//     allowedHeaders: [
+//       "Authorization",
+//       "Content-Type",
+//       "Origin",
+//       "Access-Control-Allow-Origin",
+//     ],
+//     preflightContinue: false,
+//     optionsSuccessStatus: 204,
+//   })
+// );
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
