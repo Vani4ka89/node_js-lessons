@@ -7,7 +7,7 @@ import * as mongoose from "mongoose";
 import { Server, Socket } from "socket.io";
 import * as swaggerUi from "swagger-ui-express";
 
-import { configs } from "./configs/config";
+import { configs } from "./configs";
 import { cronRunner } from "./crons";
 import { ApiError } from "./errors";
 import { authRouter, userRouter } from "./routers";
