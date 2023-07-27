@@ -1,10 +1,10 @@
 // import cors from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
 import fileupload from "express-fileupload";
-import rateLimit from "express-rate-limit";
-import * as http from "http";
+// import rateLimit from "express-rate-limit";
+// import * as http from "http";
 import * as mongoose from "mongoose";
-import { Server, Socket } from "socket.io";
+// import { Server, Socket } from "socket.io";
 import * as swaggerUi from "swagger-ui-express";
 
 import { configs } from "./configs";
@@ -14,25 +14,25 @@ import { authRouter, userRouter } from "./routers";
 import * as swaggerJson from "./utils/swagger.json";
 
 const app: Application = express();
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*",
+//   },
+// });
 
-io.on("connection", (socket: Socket) => {
-  console.log(socket.id);
-  socket.emit("message", { message: "hello" });
-});
+// io.on("connection", (socket: Socket) => {
+//   console.log(socket.id);
+//   socket.emit("message", { message: "hello" });
+// });
 
-const limiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 10,
-  standardHeaders: true,
-});
-
-app.use("*", limiter);
+// const limiter = rateLimit({
+//   windowMs: 60 * 1000,
+//   max: 10,
+//   standardHeaders: true,
+// });
+//
+// app.use("*", limiter);
 
 // app.use(
 //   cors({
@@ -65,8 +65,31 @@ app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-server.listen(configs.PORT, () => {
-  mongoose.connect(configs.DB_URL);
-  cronRunner();
-  console.log(`Server has started on PORT ${configs.PORT}`);
-});
+const dbConnect = async () => {
+  let dbCon = false;
+  
+  while (!dbCon) {
+    try {
+      console.log('Connecting to database');
+      await mongoose.connect(configs.DB_URL);
+      dbCon = true;
+    } catch (e) {
+      console.log('Database unavailable, wait 3 seconds');
+      await new Promise(resolve => setTimeout(resolve, 3000))
+    }
+  }
+}
+
+const start = async () => {
+  try {
+    await dbConnect();
+    await app.listen(configs.PORT, () => {
+      cronRunner();
+      console.log(`Server has started on PORT ${configs.PORT}`);
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+start();

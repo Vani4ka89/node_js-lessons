@@ -1,6 +1,6 @@
 FROM node:18-alpine
 
-MAINTAINER God Js dev
+MAINTAINER IT Dev
 
 RUN mkdir /app
 
